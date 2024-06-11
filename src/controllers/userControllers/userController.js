@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const errorHandler = require("../middleware/errorHandler");
+const errorHandler = require("../../middleware/errorHandler");
 
 const userController = {
   getUsers: async (req, res, next) => {
@@ -67,10 +67,25 @@ const userController = {
     }
   },
 
+  updateRole: async (req, res, next) => {
+    const userId = req.params.id;
+    const role = req.body.role;
+    try {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { role : "admin" },
+      });
+      res.status(200).json("Role updated successfully.");
+    } catch (error) {
+      next(error);
+    }
+  },
+
   deleteUser: async (req, res, next) => {
+    const userId = req.params.id;
     try {
       await prisma.user.delete({
-        where: { id: req.params.id },
+        where: { id: userId },
       });
       res.status(200).json("User deleted successfully.");
     } catch (error) {
