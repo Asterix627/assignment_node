@@ -1,10 +1,10 @@
-require('dotenv').config();
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+require("dotenv").config();
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const errorHandler = require('../middleware/errorHandler');
+const errorHandler = require("../middleware/errorHandler");
 
 const userController = {
   getUsers: async (req, res, next) => {
@@ -38,8 +38,8 @@ const userController = {
           lastName,
           email,
           password: hashedPassword,
-          role
-        }
+          role,
+        },
       });
       res.status(201).json({ message: "Registration Success", user: users });
     } catch (error) {
@@ -47,8 +47,8 @@ const userController = {
     }
   },
 
-  updateUser: async(req, res, next) => {
-    try{
+  updateUser: async (req, res, next) => {
+    try {
       const { firstName, lastName, email, password, role } = req.body;
       const hashedPassword = await bcrypt.hash(password, 12);
       const user = await prisma.user.update({
@@ -58,8 +58,8 @@ const userController = {
           lastName,
           email,
           password: hashedPassword,
-          role
-        }
+          role,
+        },
       });
       res.status(200).json({ message: "User updated", user });
     } catch (error) {
@@ -76,10 +76,7 @@ const userController = {
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 module.exports = userController;
-
-
-

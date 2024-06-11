@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const logoutController = async (req, res, next) => {
@@ -6,10 +6,10 @@ const logoutController = async (req, res, next) => {
     // Pastikan untuk menunggu hingga operasi Prisma selesai
     await prisma.user.update({
       where: { id: req.user.id },
-      data: { token: null }
+      data: { token: null },
     });
 
-    res.status(200).json({ message: 'Logout berhasil.' });
+    res.status(200).json({ message: "Logout berhasil." });
   } catch (error) {
     next(error);
   } finally {

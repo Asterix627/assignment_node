@@ -4,12 +4,12 @@ const prisma = new PrismaClient();
 const absenMasukController = async (req, res, next) => {
   try {
     const userId = req.params.id;
-    const waktuUTC = new Date()
-    const waktuMasuk = new Date(waktuUTC.getTime() + (7 * 60 * 60 * 1000)) // Menambahkan 7 jam ke waktu UTC
+    const waktuUTC = new Date();
+    const waktuMasuk = new Date(waktuUTC.getTime() + 7 * 60 * 60 * 1000); // Menambahkan 7 jam ke waktu UTC
 
     // Ambil user dari tabel user
     const user = await prisma.user.findUnique({
-      where: { id: userId }
+      where: { id: userId },
     });
 
     if (!user) {
@@ -24,9 +24,9 @@ const absenMasukController = async (req, res, next) => {
       where: {
         userId: userId,
         waktuMasuk: {
-          gte: today
-        }
-      }
+          gte: today,
+        },
+      },
     });
 
     if (absenHariIni) {
@@ -37,9 +37,9 @@ const absenMasukController = async (req, res, next) => {
     const absen = await prisma.absen.create({
       data: {
         userId: userId,
-        name: user.firstName + ' ' + user.lastName, // Menggabungkan nama depan dan nama belakang
-        waktuMasuk: waktuMasuk
-      }
+        name: user.firstName + " " + user.lastName, // Menggabungkan nama depan dan nama belakang
+        waktuMasuk: waktuMasuk,
+      },
     });
 
     res.json({ message: "Absen masuk berhasil dicatat.", absen });
@@ -49,5 +49,5 @@ const absenMasukController = async (req, res, next) => {
 };
 
 module.exports = {
-  absenMasukController
+  absenMasukController,
 };

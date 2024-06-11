@@ -1,14 +1,13 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const loginController = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
 
     if (!user) {
@@ -20,13 +19,17 @@ const loginController = async (req, res, next) => {
       return res.status(401).json({ message: "Password salah." });
     }
 
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: '24h'
-    });
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "24h",
+      }
+    );
 
     await prisma.user.update({
       where: { id: user.id },
-      data: { token }
+      data: { token },
     });
 
     res.json({ message: "Login berhasil.", token });
@@ -36,7 +39,5 @@ const loginController = async (req, res, next) => {
 };
 
 module.exports = {
-  loginController
+  loginController,
 };
-
-
