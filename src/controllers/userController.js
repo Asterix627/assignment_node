@@ -41,7 +41,7 @@ const userController = {
           role
         }
       });
-      res.json(users);
+      res.status(201).json({ message: "Registration Success", user: users });
     } catch (error) {
       next(error);
     }
@@ -61,7 +61,7 @@ const userController = {
           role
         }
       });
-      res.status(200).json(user);
+      res.status(200).json({ message: "User updated", user });
     } catch (error) {
       next(error);
     }
