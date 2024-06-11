@@ -5,7 +5,10 @@ const prisma = new PrismaClient();
 const {Unauthorized} = require('http-errors');
 
 const verifyToken = (req, res, next) => {
-    const token = req.header('Authorization').split(" ")[1];
+    const authHeader = req.header('Authorization');
+    if (!authHeader) return res.status(401).send('Access denied. No token provided.');
+
+    const token = authHeader.split(" ")[1];
     if (!token) return res.status(401).send('Access denied. No token provided.');
 
     try {
@@ -16,6 +19,7 @@ const verifyToken = (req, res, next) => {
         res.status(403).send('Invalid token.');
     }
 };
+
 
 const verifyRoles = async (req, res, next) => {
     try { 
