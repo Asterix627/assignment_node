@@ -19,17 +19,31 @@ const loginController = async (req, res, next) => {
       return res.status(401).json({ message: "Password salah." });
     }
 
+    // Generate JWT token
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
       {
-        expiresIn: "24h",
+        expiresIn: "365d",
       }
     );
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { token },
+    // Save the token in the auth table
+    const authRecord = await prisma.auth.create({
+      data: {
+        id: user.id,
+        token: token,
+      },
+    });
+
+    // Create or update UserAuth relation
+    await prisma.userAuth.upsert({
+      where: { userId_authId: { userId: user.id, authId: authRecord.id } },
+      update: { authId: authRecord.id },
+      create: {
+        userId: user.id,
+        authId: authRecord.id,
+      },
     });
 
     res.json({ message: "Login berhasil.", token });

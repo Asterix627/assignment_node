@@ -1,7 +1,7 @@
 const validateUserInput = (req, res, next) => {
-  const { firstName, lastName, email, password, role } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
-  if (!firstName || !lastName || !email || !password || !role) {
+  if (!firstName || !lastName || !email || !password ) {
     return res.status(400).json({ message: "Semua field harus diisi." });
   }
 
@@ -19,10 +19,6 @@ const validateUserInput = (req, res, next) => {
     return res
       .status(400)
       .json({ message: "Password harus memiliki minimal 6 karakter." });
-  }
-
-  if (!["admin", "user"].includes(role)) {
-    return res.status(400).json({ message: "Role harus 'admin' atau 'user'." });
   }
 
   next();

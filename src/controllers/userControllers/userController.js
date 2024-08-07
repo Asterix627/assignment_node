@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const errorHandler = require("../../middleware/errorHandler");
+const idGenerator = require("../../utils/IdGenerator");
 
 const userController = {
   getUsers: async (req, res, next) => {
@@ -32,13 +33,17 @@ const userController = {
       const { firstName, lastName, email, password, role } = req.body;
       const hashedPassword = await bcrypt.hash(password, 12);
       console.log(req.body);
+
+      // const userRole = role || "user";
+      const idUser = idGenerator("USR");
       const users = await prisma.user.create({
         data: {
+          id: idUser,
           firstName,
           lastName,
           email,
           password: hashedPassword,
-          role,
+          // role: userRole,
         },
       });
       res.status(201).json({ message: "Registration Success", user: users });
@@ -73,7 +78,7 @@ const userController = {
     try {
       await prisma.user.update({
         where: { id: userId },
-        data: { role : "admin" },
+        data: { role: "admin" },
       });
       res.status(200).json("Role updated successfully.");
     } catch (error) {
