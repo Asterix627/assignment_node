@@ -54,16 +54,13 @@ const userController = {
 
   updateUser: async (req, res, next) => {
     try {
-      const { firstName, lastName, email, password, role } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 12);
+      const { firstName, lastName, email } = req.body;
       const user = await prisma.user.update({
         where: { id: req.params.id },
         data: {
           firstName,
           lastName,
           email,
-          password: hashedPassword,
-          role,
         },
       });
       res.status(200).json({ message: "User updated", user });
@@ -74,11 +71,10 @@ const userController = {
 
   updateRole: async (req, res, next) => {
     const userId = req.params.id;
-    const role = req.body.role;
     try {
       await prisma.user.update({
         where: { id: userId },
-        data: { role: "admin" },
+        data: { role: "Admin" },
       });
       res.status(200).json("Role updated successfully.");
     } catch (error) {
@@ -89,14 +85,33 @@ const userController = {
   deleteUser: async (req, res, next) => {
     const userId = req.params.id;
     try {
-      await prisma.user.delete({
-        where: { id: userId },
+      await prisma.$transaction(async (prisma) => {
+        // Hapus catatan yang terkait dari tabel absen
+        await prisma.absen.deleteMany({
+          where: { userId: userId },
+        });
+  
+        // Hapus catatan yang terkait dari tabel UserAuth
+        await prisma.userAuth.deleteMany({
+          where: { userId: userId },
+        });
+  
+        // Hapus catatan yang terkait dari tabel InvTrouble
+        await prisma.invTrouble.deleteMany({
+          where: { pelaporId: userId },
+        });
+  
+        // Setelah data terkait dihapus, hapus pengguna dari tabel User
+        await prisma.user.delete({
+          where: { id: userId },
+        });
       });
+  
       res.status(200).json("User deleted successfully.");
     } catch (error) {
       next(error);
     }
-  },
+  }  
 };
 
 module.exports = userController;

@@ -1,24 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userControllers/userController");
-const { validateUserInput } = require("../utils/validators/auth");
-const { loginController } = require("../controllers/userControllers/loginController");
-const { logoutController } = require("../controllers/userControllers/logoutController");
-const { verifyToken, verifyRoles } = require("../middleware/auth");
-const { absenMasukController } = require("../controllers/absenControllers/absenMasukController");
+const validateInput = require("../utils/validators/auth");
+const verifyAuth = require("../middleware/auth");
 const { verify } = require("jsonwebtoken");
-const { getAbsenControllers, getAbsenByUserId } = require("../controllers/absenControllers/getAbsenControllers");
 
-router.get("/users", verifyToken, userController.getUsers);
-router.get("/users/:id", userController.getDetailUsers);
-router.post("/register", validateUserInput, userController.createUser);
-router.put("/users/:id", validateUserInput, userController.updateUser);
-router.delete("/users/:id", verifyToken, verifyRoles, userController.deleteUser);
-router.post("/login", loginController);
-router.put("/logout", verifyToken, logoutController);
-router.post("/users/:id/absen-masuk", verifyToken, absenMasukController);
-router.put("/users/:id/role", verifyToken, verifyRoles, userController.updateRole);
-router.get("/absen", verifyToken, verifyRoles, getAbsenControllers);
-router.get("/absen/:id", verifyToken, verifyRoles, getAbsenByUserId);
+router.post("/register", validateInput.register, userController.createUser); //register-done
+router.get("/users", verifyAuth.token, userController.getUsers); //getUser-done
+router.get("/users/:id", userController.getDetailUsers); //getUserbyID-done
+router.put("/users/:id", validateInput.register, userController.updateUser); //updateUserbyID-done
+router.delete("/users/:id", verifyAuth.token, verifyAuth.roles, userController.deleteUser); //deleteuser-done, di FE kasih peringatan data pelaporan dan absen akan ikut terhapus
+router.put("/users/:id/role", verifyAuth.token, verifyAuth.roles, userController.updateRole); //updateAdmin-done
+router.put("/users/:id/role", verifyAuth.token, verifyAuth.roles, userController.updateRole); //updateDetailUser-done
 
 module.exports = router;
