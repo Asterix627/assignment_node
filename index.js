@@ -2,7 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const userRouters = require("./src/routes/userRouters");
 const absenRouters = require("./src/routes/absenRouter");
-const authRouters = require("./src/routes/authRouter")
+const authRouters = require("./src/routes/authRouter");
+const categoryRouters = require("./src/routes/categoryRouter");
+const invRouters = require("./src/routes/invRouters");
 const cors = require("cors");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
@@ -16,7 +18,14 @@ app.use(cors());
 app.use(express.json());
 app.use(authRouters, userRouters, absenRouters);
 app.use(errorHandler);
-app.use("/api", authRouters, userRouters, absenRouters);
+app.use(
+  "/api",
+  authRouters,
+  userRouters,
+  absenRouters,
+  categoryRouters,
+  invRouters
+);
 
 const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
