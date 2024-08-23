@@ -5,6 +5,7 @@ const absenRouters = require("./src/routes/absenRouter");
 const authRouters = require("./src/routes/authRouter");
 const categoryRouters = require("./src/routes/categoryRouter");
 const invRouters = require("./src/routes/invRouters");
+const InvProblemRouters = require("./src/routes/invProblemRouters");
 const cors = require("cors");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
@@ -24,7 +25,8 @@ app.use(
   userRouters,
   absenRouters,
   categoryRouters,
-  invRouters
+  invRouters,
+  InvProblemRouters
 );
 
 const server = app.listen(port, () => {
